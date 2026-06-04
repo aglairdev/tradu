@@ -1,0 +1,11 @@
+===================================================================
+TUTORIAL DE INSTALAÇÃO (GENÉRICO)
+===================================================================
+No linux: 
+1. Abra as propriedades do jogo na Steam e ative o Proton Experimental.
+2. Abra o jogo pelo menos uma vez antes de traduzir para evitar erros de primeira execução.
+
+Instalação:
+1. Extraia o conteúdo do arquivo .zip baixado.
+2. Copie e sobrescreva os arquivos extraídos diretamente na pasta raiz do jogo.
+===================================================================
