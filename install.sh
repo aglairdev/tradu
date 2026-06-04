@@ -13,7 +13,7 @@ clear
 
 echo -e "${BLUE}Tradu ${AGL}${RESET}"
 
-#  verifica conectividade
+# verifica conectividade
 echo -e "${YELLOW}Verificando conexão com o servidor...${RESET}"
 if ! curl -s --connect-timeout 5 https://tradu.pages.dev/ > /dev/null; then
     echo -e " ${RED}${CROSS} Erro: Não foi possível alcançar https://tradu.pages.dev${RESET}"
@@ -63,37 +63,63 @@ tradu() {
     local BLU="\e[34m"
     local RES="\e[0m"
 
-    # Se rodar apenas 'tradu', lista o acervo
+    # se rodar apenas 'tradu', lista o acervo
     if [ -z "$1" ]; then
         echo -e "${BLU}Traduções disponíveis:${RES}"
-        # Filtra apenas as linhas com links/arquivos e limpa as tags HTML do index
-        curl -s "$URL_BASE/" | grep -E '\.zip' | sed -e 's/<[^>]*>//g' -e 's/^[ \t]*//'
+        # Filtra linhas .zip, remove tags HTML, aspas, espaços e caracteres de árvore (│, ├──)
+        curl -s "$URL_BASE/" | grep -E '\.zip' | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//'
         return 0
     fi
 
     local acao=$1
     local jogo=$2
 
-    # Ajusta a ordem caso o usuário digite "tradu jogo -flag"
+    # ajusta a ordem caso o usuário digite "tradu jogo -flag"
     if [[ "$acao" != "-d" && "$acao" != "-t" && "$acao" != "-h" && "$acao" != "--help" ]]; then
         jogo=$1; acao=$2
     fi
+
+    # remove o '.zip' do final do nome do jogo, caso o usuário tenha digitado com a extensão
+    jogo="${jogo%.zip}"
 
     case $acao in
         -d)
             echo -e "${YEL}Baixando $jogo.zip para $DOWNLOAD_DIR...${RES}"
             mkdir -p "$DOWNLOAD_DIR"
-            if curl -L "$URL_BASE/arquivos/$jogo.zip" -o "$DOWNLOAD_DIR/$jogo.zip"; then
-                echo -e "${GRE}✓ Download concluído com sucesso!${RES}"
+            
+            local link_direto=$(curl -s "$URL_BASE/" | grep "${jogo}\.zip" | sed -E -e 's/.*href="([^"]*)".*/\1/')
+
+            if [ -z "$link_direto" ]; then
+                echo -e "${RED_C}✗ Erro ao baixar o arquivo. Verifique se o nome do jogo está correto.${RES}"
+                return 1
+            fi
+
+            if [[ "$link_direto" != http* ]]; then
+                link_direto="${URL_BASE}/${link_direto#/}"
+            fi
+
+            # executa o download com o curl tradicional exibindo a barra de progresso original
+            if curl -L "$link_direto" -o "$DOWNLOAD_DIR/$jogo.zip"; then
+                # Proteção caso o link retornado caia numa página 404/HTML mascarada
+                if head -n 1 "$DOWNLOAD_DIR/$jogo.zip" | grep -qE -i '<!DOCTYPE|<html'; then
+                    echo -e "${RED_C}✗ Erro ao baixar o arquivo. Verifique se o nome do jogo está correto.${RES}"
+                    rm -f "$DOWNLOAD_DIR/$jogo.zip"
+                else
+                    echo -e "${GRE}✓ Download concluído com sucesso!${RES}"
+                fi
             else
                 echo -e "${RED_C}✗ Erro ao baixar o arquivo. Verifique se o nome do jogo está correto.${RES}"
             fi
             ;;
         -t)
             echo -e "${BLU}=== Tutorial para $jogo ===${RES}"
-            local status=$(curl -s -o /dev/null -w "%{http_code}" "$URL_BASE/tutoriais/$jogo.txt")
-            if [ "$status" = "200" ]; then
-                curl -s "$URL_BASE/tutoriais/$jogo.txt"
+            # mudança de 'status' para 'http_status' para evitar conflito de variável reservada
+            local conteudo_tutorial=$(curl -s "$URL_BASE/tutoriais/$jogo.txt")
+            local http_status=$(curl -s -o /dev/null -w "%{http_code}" "$URL_BASE/tutoriais/$jogo.txt")
+            
+            # se o arquivo existe e NÃO for um HTML falso enviado pelo Cloudflare, mostra o tutorial puro
+            if [ "$http_status" = "200" ] && ! echo "$conteudo_tutorial" | grep -qE -i '<!DOCTYPE|<html'; then
+                echo "$conteudo_tutorial"
             else
                 echo -e "${YEL}[Aviso: Sem tutorial específico. Exibindo tutorial genérico]${RES}"
                 curl -s "$URL_BASE/tutoriais/generico.txt"
@@ -121,10 +147,12 @@ fi
 
 clear
 echo -e "${GREEN}${CHECK} CONFIGURAÇÃO CONCLUÍDA COM SUCESSO!${RESET}"
-echo -e "O comando '${YELLOW}tradu${RESET}' foi adicionado com sucesso no seu sistema."
+echo ""
+echo -e "O comando ${YELLOW}tradu${RESET} foi adicionado no seu sistema."
 echo ""
 echo -e "${BLUE}ATALHOS DISPONÍVEIS:${RESET}"
-echo -e "  ${YELLOW}tradu${RESET}                      -> Lista apenas as traduções"
+echo ""
+echo -e "  ${YELLOW}tradu${RESET}                      -> Lista as traduções"
 echo -e "  ${YELLOW}tradu -d [nome-do-jogo]${RESET}    -> Baixa a tradução direto"
 echo -e "  ${YELLOW}tradu -t [nome-do-jogo]${RESET}    -> Mostra as instruções"
 echo -e "  ${YELLOW}tradu -h${RESET}                   -> Abre a tela de ajuda"
