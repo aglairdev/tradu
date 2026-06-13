@@ -23,13 +23,17 @@ fi
 echo -e " ${GREEN}${CHECK} Conexão estabelecida!${RESET}\n"
 
 # detecta o terminal 
-if [ -n "$ZSH_VERSION" ]; then
-    RC_FILE="$HOME/.zshrc"
-elif [ -n "$BASH_VERSION" ]; then
-    RC_FILE="$HOME/.bashrc"
-else
-    RC_FILE="$HOME/.bashrc"
-fi
+case "$SHELL" in
+    */zsh)
+        RC_FILE="$HOME/.zshrc"
+        ;;
+    */bash)
+        RC_FILE="$HOME/.bashrc"
+        ;;
+    *)
+        RC_FILE="$HOME/.bashrc"
+        ;;
+esac
 
 echo -e "${YELLOW}Configurando o comando 'tradu' em: ${BLUE}$RC_FILE${RESET}"
 
