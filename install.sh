@@ -63,11 +63,15 @@ tradu() {
     local BLU="\e[34m"
     local RES="\e[0m"
 
+    # extensões suportadas
+    local EXTENSOES=("zip" "rar")
+    local EXT_REGEX=$(IFS='|'; echo "${EXTENSOES[*]}")
+
     # se rodar apenas 'tradu', lista o acervo
     if [ -z "$1" ]; then
         echo -e "${BLU}Traduções disponíveis:${RES}"
         # Filtra linhas .zip, remove tags HTML, aspas, espaços e caracteres de árvore (│, ├──)
-        curl -s "$URL_BASE/" | grep -E '\.zip' | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//'
+        curl -s "$URL_BASE/" | grep -E "\.(${EXT_REGEX})" | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//'        
         return 0
     fi
 
@@ -79,15 +83,16 @@ tradu() {
         jogo=$1; acao=$2
     fi
 
-    # remove o '.zip' do final do nome do jogo, caso o usuário tenha digitado com a extensão
-    jogo="${jogo%.zip}"
+    # remove a extensão do final do nome do jogo, caso o usuário tenha digitado com ela
+    for ext in "${EXTENSOES[@]}"; do
+        jogo="${jogo%.$ext}"
+    done
 
     case $acao in
         -d)
-            echo -e "${YEL}Baixando $jogo.zip para $DOWNLOAD_DIR...${RES}"
             mkdir -p "$DOWNLOAD_DIR"
-            
-            local link_direto=$(curl -s "$URL_BASE/" | grep "${jogo}\.zip" | sed -E -e 's/.*href="([^"]*)".*/\1/')
+
+            local link_direto=$(curl -s "$URL_BASE/" | grep -E "${jogo}\.(${EXT_REGEX})" | sed -E -e 's/.*href="([^"]*)".*/\1/')
 
             if [ -z "$link_direto" ]; then
                 echo -e "${RED_C}✗ Erro ao baixar o arquivo. Verifique se o nome do jogo está correto.${RES}"
@@ -98,12 +103,17 @@ tradu() {
                 link_direto="${URL_BASE}/${link_direto#/}"
             fi
 
+            # extensão real do arquivo, descoberta a partir do link encontrado
+            local extensao="${link_direto##*.}"
+
+            echo -e "${YEL}Baixando $jogo.$extensao para $DOWNLOAD_DIR...${RES}"
+
             # executa o download com o curl tradicional exibindo a barra de progresso original
-            if curl -L "$link_direto" -o "$DOWNLOAD_DIR/$jogo.zip"; then
+            if curl -L "$link_direto" -o "$DOWNLOAD_DIR/$jogo.$extensao"; then
                 # Proteção caso o link retornado caia numa página 404/HTML mascarada
-                if head -n 1 "$DOWNLOAD_DIR/$jogo.zip" | grep -qE -i '<!DOCTYPE|<html'; then
+                if head -n 1 "$DOWNLOAD_DIR/$jogo.$extensao" | grep -qE -i '<!DOCTYPE|<html'; then
                     echo -e "${RED_C}✗ Erro ao baixar o arquivo. Verifique se o nome do jogo está correto.${RES}"
-                    rm -f "$DOWNLOAD_DIR/$jogo.zip"
+                    rm -f "$DOWNLOAD_DIR/$jogo.$extensao"
                 else
                     echo -e "${GRE}✓ Download concluído com sucesso!${RES}"
                 fi
