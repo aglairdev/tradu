@@ -1,26 +1,103 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Traduções ꕤ</title>
+<meta charset="UTF-8">
+<title>Tradu</title>
+<style>
+:root {
+--teal: #0D9488;
+--bg: #0e0e0e;
+--text: #d4d4d4;
+--muted: #888;
+  }
+body {
+background: var(--bg);
+color: var(--text);
+font-family: ui-monospace, "SF Mono", Consolas, monospace;
+max-width: 720px;
+margin: 3rem auto 4rem;
+padding: 0 1.5rem;
+line-height: 1.6;
+  }
+h1 {
+color: var(--teal);
+font-size: 1.4rem;
+margin-bottom: 0.25rem;
+  }
+p {
+color: var(--muted);
+margin-top: 0;
+  }
+a {
+color: var(--text);
+text-decoration: underline;
+text-decoration-color: var(--muted);
+text-underline-offset: 2px;
+  }
+a:hover {
+color: #b8b8b8;
+text-decoration-color: #b8b8b8;
+  }
+.arquivo {
+color: var(--teal);
+text-decoration: none;
+  }
+.arquivo:hover {
+text-decoration: underline;
+text-decoration-color: var(--teal);
+  }
+pre {
+color: var(--text);
+font-size: 0.9rem;
+overflow-x: auto;
+  }
+.tag {
+color: var(--muted);
+  }
+.creditos {
+color: var(--muted);
+font-size: 0.85em;
+  }
+footer {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+text-align: center;
+padding: 0.75rem 0;
+background: var(--bg);
+font-size: 0.9rem;
+  }
+footer a {
+color: var(--teal);
+text-decoration: none;
+  }
+footer a:hover {
+text-decoration: underline;
+  }
+</style>
 </head>
 <body>
-    <h1>Traduções</h1>
-    <p>Traduções <b>pt-br</b> de jogos para backup pessoal.</p>
-    <pre>
+<h1>Tradu</h1>
+<p>Traduções <b>pt-br</b> de jogos desktop para backup.</p>
+<pre>
 Tradu/
 ├── index.html
 ├── install.sh
 ├── arquivos/
-│   ├── <a href="https://github.com/aglairdev/Tradu/releases/download/arquivos/night_in_the_woods.zip">night_in_the_woods.zip</a> [windows]
-|   |   └── <span><a href="https://www.facebook.com/nitwbr/">créditos</a></span>
-│   ├── <a href="https://github.com/aglairdev/Tradu/releases/download/arquivos/chef_rpg.zip">chef_rpg.zip</a> [windows]
-|   |   └── <span><a href="https://www.nexusmods.com/chefrpg/mods/42">créditos</a></span>
-│   ├── <a href="https://github.com/aglairdev/Tradu/releases/download/arquivos/undertale.rar">undertale.rar</a> [windows]
-|   |   └── <span><a href="https://www.facebook.com/undertaleptbrbynana/">créditos</a></span>
+│   ├── <a class="arquivo" href="https://github.com/aglairdev/Tradu/releases/download/arquivos/night_in_the_woods.zip">night_in_the_woods.zip</a> <span class="tag">[windows]</span>
+│   │   └── <span class="creditos"><a href="https://www.facebook.com/nitwbr/">créditos</a></span>
+│   ├── <a class="arquivo" href="https://github.com/aglairdev/Tradu/releases/download/arquivos/chef_rpg.zip">chef_rpg.zip</a> <span class="tag">[windows]</span>
+│   │   └── <span class="creditos"><a href="https://www.nexusmods.com/chefrpg/mods/42">créditos</a></span>
+│   ├── <a class="arquivo" href="https://github.com/aglairdev/Tradu/releases/download/arquivos/undertale.rar">undertale.rar</a> <span class="tag">[windows]</span>
+│   │   └── <span class="creditos"><a href="https://www.facebook.com/undertaleptbrbynana/">créditos</a></span>
 └── tutoriais/
     ├── <a href="/tutoriais/generico.txt">generico.txt</a>
     ├── <a href="/tutoriais/chef_rpg.txt">chef_rpg.txt</a>
-    </pre>
+</pre>
+<footer><a href="https://github.com/aglairdev/Tradu" target="_blank">ꕤ AGL</a></footer>
+<script>
+console.log('%c ꕤ AGL ', 'color: #0D9488; font-size: 1.2rem; font-weight: bold;');
+</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 YELLOW="\e[33m"
 GREEN="\e[32m"
 RED="\e[31m"
-BLUE="\e[34m"
+TEAL="\e[38;2;13;148;136m"
 RESET="\e[0m"
 CHECK="✓"
 CROSS="✗"
@@ -11,7 +11,7 @@ AGL="ꕤ"
 
 clear
 
-echo -e "${BLUE}Tradu ${AGL}${RESET}"
+echo -e "${TEAL}Tradu ${AGL}${RESET}"
 
 # verifica conectividade
 echo -e "${YELLOW}Verificando conexão com o servidor...${RESET}"
@@ -35,7 +35,7 @@ case "$SHELL" in
         ;;
 esac
 
-echo -e "${YELLOW}Configurando o comando 'tradu' em: ${BLUE}$RC_FILE${RESET}"
+echo -e "${YELLOW}Configurando o comando 'tradu' em: ${TEAL}$RC_FILE${RESET}"
 
 # permissão de escrita
 if [ ! -w "$HOME" ]; then
@@ -64,8 +64,9 @@ tradu() {
     local YEL="\e[33m"
     local GRE="\e[32m"
     local RED_C="\e[31m"
-    local BLU="\e[34m"
+    local TEAL="\e[38;2;13;148;136m"
     local RES="\e[0m"
+    local AGL="ꕤ"
 
     # extensões suportadas
     local EXTENSOES=("zip" "rar")
@@ -73,7 +74,7 @@ tradu() {
 
     # se rodar apenas 'tradu', lista o acervo
     if [ -z "$1" ]; then
-        echo -e "${BLU}Traduções disponíveis:${RES}"
+        echo -e "${TEAL}Traduções disponíveis:${RES}"
         # Filtra linhas .zip, remove tags HTML, aspas, espaços e caracteres de árvore (│, ├──)
         curl -s "$URL_BASE/" | grep -E "\.(${EXT_REGEX})" | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//'        
         return 0
@@ -83,7 +84,7 @@ tradu() {
     local jogo=$2
 
     # ajusta a ordem caso o usuário digite "tradu jogo -flag"
-    if [[ "$acao" != "-d" && "$acao" != "-t" && "$acao" != "-h" && "$acao" != "--help" ]]; then
+    if [[ "$acao" != "-d" && "$acao" != "-t" && "$acao" != "-h" ]]; then
         jogo=$1; acao=$2
     fi
 
@@ -126,7 +127,7 @@ tradu() {
             fi
             ;;
         -t)
-            echo -e "${BLU}=== Tutorial para $jogo ===${RES}"
+            local jogo_upper=$(echo "$jogo" | tr '[:lower:]' '[:upper:]')
             # mudança de 'status' para 'http_status' para evitar conflito de variável reservada
             local conteudo_tutorial=$(curl -s "$URL_BASE/tutoriais/$jogo.txt")
             local http_status=$(curl -s -o /dev/null -w "%{http_code}" "$URL_BASE/tutoriais/$jogo.txt")
@@ -135,20 +136,19 @@ tradu() {
             if [ "$http_status" = "200" ] && ! echo "$conteudo_tutorial" | grep -qE -i '<!DOCTYPE|<html'; then
                 echo "$conteudo_tutorial"
             else
-                echo -e "${YEL}[Aviso: Sem tutorial específico. Exibindo tutorial genérico]${RES}"
                 curl -s "$URL_BASE/tutoriais/generico.txt"
             fi
             echo ""
             ;;
         -h|--help)
-            echo -e "${BLU}TRADU - AJUDA${RES}"
-            echo -e "  tradu                      : Lista todos os jogos do acervo"
-            echo -e "  tradu -d [nome-do-jogo]    : Baixa o .zip em ~/Downloads"
-            echo -e "  tradu -t [nome-do-jogo]    : Exibe o tutorial"
-            echo -e "  tradu -h | --help          : Exibe atalhos"
+            echo -e "Atalhos:"
+            echo -e "  ${TEAL}tradu${RES}                      : Lista todos os jogos do acervo"
+            echo -e "  ${TEAL}tradu${RES} -d [nome-do-jogo]    : Baixa tradução para ~/Downloads"
+            echo -e "  ${TEAL}tradu${RES} -t [nome-do-jogo]    : Exibe o tutorial"
+            echo -e "  ${TEAL}tradu${RES} -h                   : Exibe atalhos"
             ;;
         *)
-            echo -e "${RED_C}Opção inválida.${RES} Digite '${YEL}tradu -h${RES}' para ver as opções disponíveis."
+            echo -e "${RED_C}Opção inválida.${RES} Digite '${TEAL}tradu -h${RES}' para ver as opções disponíveis."
             ;;
     esac
 }
@@ -160,15 +160,12 @@ then
 fi
 
 clear
-echo -e "${GREEN}${CHECK} CONFIGURAÇÃO CONCLUÍDA COM SUCESSO!${RESET}"
-echo ""
-echo -e "O comando ${YELLOW}tradu${RESET} foi adicionado no seu sistema."
-echo ""
-echo -e "${BLUE}ATALHOS DISPONÍVEIS:${RESET}"
-echo ""
-echo -e "  ${YELLOW}tradu${RESET}                      -> Lista as traduções"
-echo -e "  ${YELLOW}tradu -d [nome-do-jogo]${RESET}    -> Baixa a tradução direto"
-echo -e "  ${YELLOW}tradu -t [nome-do-jogo]${RESET}    -> Mostra as instruções"
-echo -e "  ${YELLOW}tradu -h${RESET}                   -> Abre a tela de ajuda"
+echo -e "${GREEN}${CHECK} CONFIGURAÇÃO CONCLUÍDA COM SUCESSO! ${AGL}${RESET}\n"
+echo -e "O comando ${TEAL}tradu${RESET} foi adicionado no seu sistema.\n"
+echo -e "Atalhos:\n"
+echo -e "  ${TEAL}tradu${RESET}                      : Lista as traduções"
+echo -e "  ${TEAL}tradu${RESET} -d [nome-do-jogo]    : Baixa a tradução direto"
+echo -e "  ${TEAL}tradu${RESET} -t [nome-do-jogo]    : Mostra os tutoriais"
+echo -e "  ${TEAL}tradu${RESET} -h                   : Abre a tela de ajuda"
 echo ""
 echo -e "Para ativar agora sem deslogar, rode: ${YELLOW}source $RC_FILE${RESET}"
