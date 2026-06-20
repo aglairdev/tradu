@@ -30,6 +30,11 @@ curl -sSL tradu.pages.dev/uninstall.sh | bash    # remover
 - **Commits:** `Add:` / `Att:` / `Rm:`
 
 ## Créditos
-Constam nas [releases](https://github.com/aglairdev/Tradu/releases) e diretamente no site.
+
+As traduções constam em [releases](https://github.com/aglairdev/Tradu/releases) e diretamente no site.
+
+## Licença
+
+A licença MIT deste repositório cobre apenas o código (`install.sh`, `uninstall.sh`, `index.html`).
 
 <p align="center">ꕤ AGL</p>
