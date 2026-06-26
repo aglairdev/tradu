@@ -1,15 +1,19 @@
-# [![TRADU](https://img.shields.io/badge/TRADU-0D9488?style=for-the-badge)](https://github.com/aglairdev/Tradu)
+<div align="center">
+
+[![TRADU](https://img.shields.io/badge/TRADU-0D9488?style=for-the-badge)](https://github.com/aglairdev/Tradu)
+
+</div>
 
 ## Que isso?
 
-Traduções **pt-br** de jogos desktop para backup, com atalhos de terminal (opcional) pra listar, baixar e ver tutoriais direto no shell.
-
-![Shell](https://img.shields.io/badge/Shell-121011?style=flat-square&logo=gnu-bash&logoColor=white)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+Traduções **pt-br** de jogos desktop e atalhos de terminal para listar, baixar e ler tutoriais.
 
 Site: [tradu.pages.dev](https://tradu.pages.dev/)
+
+![Shell](https://img.shields.io/badge/Shell-333333?style=flat-square&logo=gnu-bash&logoColor=white)
+![HTML5](https://img.shields.io/badge/HTML5-333333?style=flat-square&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-333333?style=flat-square&logo=css&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-333333?style=flat-square&logo=javascript&logoColor=white)
 
 ## Atalhos
 ```bash
@@ -35,6 +39,6 @@ As traduções constam em [releases](https://github.com/aglairdev/Tradu/releases
 
 ## Licença
 
-A licença MIT deste repositório cobre apenas o código (`install.sh`, `uninstall.sh`, `index.html`).
+[MIT](https://github.com/aglairdev/Tradu/blob/main/LICENSE) (install.sh, uninstall.sh, index.html).
 
 <p align="center">ꕤ AGL</p>
