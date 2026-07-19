@@ -11,16 +11,16 @@ AGL="ꕤ"
 
 clear
 
-echo -e "${TEAL}Tradu ${AGL}${RESET}"
+echo -e "\n  ${TEAL}Tradu ${AGL}${RESET}\n"
 
 # verifica conectividade
-echo -e "${YELLOW}Verificando conexão com o servidor...${RESET}"
+echo -e "  ${YELLOW}Verificando conexão com o servidor...${RESET}"
 if ! curl -s --connect-timeout 5 https://tradu.pages.dev/ > /dev/null; then
     echo -e " ${RED}${CROSS} Erro: Não foi possível alcançar https://tradu.pages.dev${RESET}"
     echo -e " Verifique sua conexão com a internet e tente novamente."
     exit 1
 fi
-echo -e " ${GREEN}${CHECK} Conexão estabelecida!${RESET}\n"
+echo -e "  ${GREEN}${CHECK} Conexão estabelecida!${RESET}\n"
 
 # detecta o terminal 
 case "$SHELL" in
@@ -35,7 +35,7 @@ case "$SHELL" in
         ;;
 esac
 
-echo -e "${YELLOW}Configurando o comando 'tradu' em: ${TEAL}$RC_FILE${RESET}"
+echo -e "\n  ${YELLOW}Configurando o comando 'tradu' em: ${TEAL}$RC_FILE${RESET}\n"
 
 # permissão de escrita
 if [ ! -w "$HOME" ]; then
@@ -74,9 +74,9 @@ tradu() {
 
     # se rodar apenas 'tradu', lista o acervo
     if [ -z "$1" ]; then
-        echo -e "${TEAL}Traduções disponíveis:${RES}"
+        echo -e "\n  Traduções disponíveis:\n"
         # Filtra linhas .zip, remove tags HTML, aspas, espaços e caracteres de árvore (│, ├──)
-        curl -s "$URL_BASE/" | grep -E "\.(${EXT_REGEX})" | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//'        
+                curl -s "$URL_BASE/" | grep -E "\.(${EXT_REGEX})" | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//' | sed 's/^/  /'         
         return 0
     fi
 
@@ -141,11 +141,11 @@ tradu() {
             echo ""
             ;;
         -h|--help)
-            echo -e "Atalhos:"
+            echo -e "\n  Atalhos:\n"
             echo -e "  ${TEAL}tradu${RES}                      : Lista todos os jogos do acervo"
             echo -e "  ${TEAL}tradu${RES} -d [nome-do-jogo]    : Baixa tradução para ~/Downloads"
             echo -e "  ${TEAL}tradu${RES} -t [nome-do-jogo]    : Exibe o tutorial"
-            echo -e "  ${TEAL}tradu${RES} -h                   : Exibe atalhos"
+            echo -e "  ${TEAL}tradu${RES} -h                   : Exibe atalhos\n"
             ;;
         *)
             echo -e "${RED_C}Opção inválida.${RES} Digite '${TEAL}tradu -h${RES}' para ver as opções disponíveis."
@@ -160,12 +160,13 @@ then
 fi
 
 clear
-echo -e "${GREEN}${CHECK} CONFIGURAÇÃO CONCLUÍDA COM SUCESSO! ${AGL}${RESET}\n"
-echo -e "O comando ${TEAL}tradu${RESET} foi adicionado no seu sistema.\n"
-echo -e "Atalhos:\n"
+echo ""
+echo -e "  O comando ${TEAL}tradu${RESET} foi adicionado no seu sistema.\n"
+echo -e "  Atalhos:\n"
 echo -e "  ${TEAL}tradu${RESET}                      : Lista as traduções"
 echo -e "  ${TEAL}tradu${RESET} -d [nome-do-jogo]    : Baixa a tradução direto"
 echo -e "  ${TEAL}tradu${RESET} -t [nome-do-jogo]    : Mostra os tutoriais"
 echo -e "  ${TEAL}tradu${RESET} -h                   : Abre a tela de ajuda"
 echo ""
-echo -e "Para ativar agora sem deslogar, rode: ${YELLOW}source $RC_FILE${RESET}"
+read -p "  Pressione Enter para recarregar o shell..."
+exec "$SHELL"

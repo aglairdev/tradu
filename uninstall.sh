@@ -10,32 +10,32 @@ CROSS="✗"
 AGL="ꕤ"
 
 clear
-
-echo -e "${TEAL}Tradu ${AGL}${RESET}"
-
-echo -e "${YELLOW}Removendo o comando ${TEAL}tradu${YELLOW} do seu sistema...${RESET}"
+echo ""
+echo -e "  ${TEAL}Tradu ${AGL}${RESET}\n"
+echo -e "  Removendo o comando ${TEAL}tradu${RESET} do seu sistema...\n"
 
 REMOVIDO=false
 
 for RC_FILE in "$HOME/.bashrc" "$HOME/.zshrc"; do
     if [ -f "$RC_FILE" ] && grep -q "# === CONFIG TRADU ===" "$RC_FILE" 2>/dev/null; then
         if [ ! -w "$RC_FILE" ]; then
-            echo -e " ${RED}${CROSS} Erro: Sem permissão de escrita em $RC_FILE.${RESET}"
+            echo -e "  ${RED}${CROSS} Erro: Sem permissão de escrita em $RC_FILE.${RESET}"
             exit 1
         fi
         if ! sed -i '/# === CONFIG TRADU ===/,/# === FIM TRADU ===/d' "$RC_FILE" 2>/dev/null; then
-            echo -e " ${RED}${CROSS} Erro: Falha ao editar $RC_FILE (verifique espaço em disco).${RESET}"
+            echo -e "  ${RED}${CROSS} Erro: Falha ao editar $RC_FILE (verifique espaço em disco).${RESET}"
             exit 1
         fi
-        echo -e " ${GREEN}${CHECK} Removido de: $RC_FILE${RESET}"
+        echo -e "  ${CHECK} Removido de: ${YELLOW}$RC_FILE${RESET}"
         REMOVIDO=true
     fi
 done
 
 if [ "$REMOVIDO" = false ]; then
-    echo -e "${YELLOW}Nenhuma configuração do tradu foi encontrada. Nada a remover.${RESET}"
+    echo -e "  Nenhuma configuração do ${TEAL}tradu${RESET} foi encontrada. Nada a remover."
     exit 0
 fi
 
 echo ""
+read -p "  Pressione Enter para recarregar o shell..."
 exec "$SHELL"
