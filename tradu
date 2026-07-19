@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# tradu ~ traduções pt-br de jogos desktop. 
+# © 2026 tradu ~ AGL ~ github.com/aglairdev
+# Licença: MIT
+#
+# Uso:  tradu                      : lista todos os jogos do acervo
+#       tradu -d [nome-do-jogo]    : baixa tradução para ~/Downloads
+#       tradu -t [nome-do-jogo]    : exibe o tutorial
+#       tradu -h                   : exibe atalhos
+#
+
+URL_BASE="https://tradu.pages.dev"
+DOWNLOAD_DIR="$HOME/Downloads"
+
+YEL="\e[33m"
+GRE="\e[32m"
+RED_C="\e[31m"
+TEAL="\e[38;2;13;148;136m"
+RES="\e[0m"
+
+EXTENSOES=("zip" "rar")
+EXT_REGEX=$(IFS='|'; echo "${EXTENSOES[*]}")
+
+if [ -z "$1" ]; then
+    echo -e "\n  Traduções disponíveis:\n"
+    curl -s "$URL_BASE/" | grep -E "\.(${EXT_REGEX})" | sed -E -e 's/<[^>]*>//g' -e "s/['\"]//g" -e 's/[│├─]//g' -e 's/^[ \t]*//' | sed 's/^/  /'
+    exit 0
+fi
+
+acao=$1
+jogo=$2
+
+if [[ "$acao" != "-d" && "$acao" != "-t" && "$acao" != "-h" ]]; then
+    jogo=$1; acao=$2
+fi
+
+for ext in "${EXTENSOES[@]}"; do
+    jogo="${jogo%.$ext}"
+done
+
+case $acao in
+    -d)
+        mkdir -p "$DOWNLOAD_DIR"
+
+        link_direto=$(curl -s "$URL_BASE/" | grep -E "${jogo}\.(${EXT_REGEX})" | sed -E -e 's/.*href="([^"]*)".*/\1/')
+
+        if [ -z "$link_direto" ]; then
+            echo -e "  ${RED_C}✗${RES} Erro ao baixar o arquivo. Verifique se o nome do jogo está correto."
+            exit 1
+        fi
+
+        if [[ "$link_direto" != http* ]]; then
+            link_direto="${URL_BASE}/${link_direto#/}"
+        fi
+
+        extensao="${link_direto##*.}"
+
+        echo -e "  Baixando ${YEL}$jogo.$extensao${RES} para ${YEL}$DOWNLOAD_DIR${RES}..."
+
+        if curl -L "$link_direto" -o "$DOWNLOAD_DIR/$jogo.$extensao"; then
+            if head -n 1 "$DOWNLOAD_DIR/$jogo.$extensao" | grep -qE -i '<!DOCTYPE|<html'; then
+                echo -e "  ${RED_C}✗${RES} Erro ao baixar o arquivo. Verifique se o nome do jogo está correto."
+                rm -f "$DOWNLOAD_DIR/$jogo.$extensao"
+            else
+                echo -e "  ${GRE}✓${RES} Download concluído com sucesso!"
+            fi
+        else
+            echo -e "  ${RED_C}✗${RES} Erro ao baixar o arquivo. Verifique se o nome do jogo está correto."
+        fi
+        ;;
+    -t)
+        jogo_upper=$(echo "$jogo" | tr '[:lower:]' '[:upper:]')
+        conteudo_tutorial=$(curl -s "$URL_BASE/tutoriais/$jogo.txt")
+        http_status=$(curl -s -o /dev/null -w "%{http_code}" "$URL_BASE/tutoriais/$jogo.txt")
+
+        if [ "$http_status" = "200" ] && ! echo "$conteudo_tutorial" | grep -qE -i '<!DOCTYPE|<html'; then
+            echo "$conteudo_tutorial"
+        else
+            curl -s "$URL_BASE/tutoriais/generico.txt"
+        fi
+        echo ""
+        ;;
+    -h|--help)
+        echo -e "\n  Atalhos:\n"
+        echo -e "  ${TEAL}tradu${RES}                      : Lista todos os jogos do acervo"
+        echo -e "  ${TEAL}tradu${RES} -d [nome-do-jogo]    : Baixa tradução para ${YEL}~/Downloads${RES}"
+        echo -e "  ${TEAL}tradu${RES} -t [nome-do-jogo]    : Exibe o tutorial"
+        echo -e "  ${TEAL}tradu${RES} -h                   : Exibe atalhos\n"
+        ;;
+    *)
+        echo -e "  ${RED_C}✗${RES} Opção inválida. Digite '${TEAL}tradu -h${RES}' para ver as opções disponíveis."
+        ;;
+esac

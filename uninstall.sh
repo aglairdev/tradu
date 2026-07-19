@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# © 2026 tradu ~ AGL ~ github.com/aglairdev
+#
 
 YELLOW="\e[33m"
 GREEN="\e[32m"
@@ -11,28 +14,35 @@ AGL="ꕤ"
 
 clear
 echo ""
-echo -e "  ${TEAL}Tradu ${AGL}${RESET}\n"
+echo -e "  ${TEAL}tradu ${AGL}${RESET}\n"
 echo -e "  Removendo o comando ${TEAL}tradu${RESET} do seu sistema...\n"
+
+if [ -f "$HOME/.local/bin/tradu" ]; then
+    rm -f "$HOME/.local/bin/tradu"
+    echo -e "  ${GREEN}${CHECK}${RESET} Removido de: ${YELLOW}$HOME/.local/bin/tradu${RESET}"
+else
+    echo -e "  Script tradu não encontrado em ${YELLOW}~/.local/bin/${RESET}"
+fi
 
 REMOVIDO=false
 
 for RC_FILE in "$HOME/.bashrc" "$HOME/.zshrc"; do
     if [ -f "$RC_FILE" ] && grep -q "# === CONFIG TRADU ===" "$RC_FILE" 2>/dev/null; then
         if [ ! -w "$RC_FILE" ]; then
-            echo -e "  ${RED}${CROSS} Erro: Sem permissão de escrita em $RC_FILE.${RESET}"
+            echo -e "  ${RED}${CROSS}${RESET} Erro: Sem permissão de escrita em $RC_FILE."
             exit 1
         fi
         if ! sed -i '/# === CONFIG TRADU ===/,/# === FIM TRADU ===/d' "$RC_FILE" 2>/dev/null; then
-            echo -e "  ${RED}${CROSS} Erro: Falha ao editar $RC_FILE (verifique espaço em disco).${RESET}"
+            echo -e "  ${RED}${CROSS}${RESET} Erro: Falha ao editar $RC_FILE (verifique espaço em disco)."
             exit 1
         fi
-        echo -e "  ${CHECK} Removido de: ${YELLOW}$RC_FILE${RESET}"
+        echo -e "  ${GREEN}${CHECK}${RESET} Removido de: ${YELLOW}$RC_FILE${RESET}"
         REMOVIDO=true
     fi
 done
 
-if [ "$REMOVIDO" = false ]; then
-    echo -e "  Nenhuma configuração do ${TEAL}tradu${RESET} foi encontrada. Nada a remover."
+if [ "$REMOVIDO" = false ] && [ ! -f "$HOME/.local/bin/tradu" ]; then
+    echo -e "  Nenhuma configuração do ${TEAL}tradu${RESET} foi encontrada. Nada a remover.\n"
     exit 0
 fi
 
