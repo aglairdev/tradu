@@ -16,8 +16,4 @@ curl -sSL tradu.pages.dev/uninstall.sh | bash    # remover
 | [chef_rpg](https://github.com/aglairdev/Tradu/releases/download/arquivos/chef_rpg.zip) | [nexusmods_chefrpg](https://www.nexusmods.com/chefrpg/mods/42) |
 | [undertale](https://github.com/aglairdev/Tradu/releases/download/arquivos/undertale.rar) | [undertaleptbrbynana](https://www.facebook.com/undertaleptbrbynana/) |
 
-## Licença
-
-MIT (install.sh, uninstall.sh, index.html).
-
 <p align="center">ꕤ AGL</p>
