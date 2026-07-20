@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# tradu ~ traduções pt-br de jogos desktop. 
+# tradu ~ traduções pt-br de jogos desktop.
 # © 2026 tradu ~ AGL ~ github.com/aglairdev
 # Licença: MIT
 #
@@ -9,6 +9,18 @@
 #       tradu -t [nome-do-jogo]    : exibe o tutorial
 #       tradu -h                   : exibe atalhos
 #
+
+REMOTE_URL="https://raw.githubusercontent.com/aglairdev/tradu/main/tradu"
+SCRIPT_PATH="$(realpath "$0")"
+
+remote_content=$(curl -sL "$REMOTE_URL" 2>/dev/null)
+if [ -n "$remote_content" ]; then
+    local_content=$(cat "$SCRIPT_PATH" 2>/dev/null)
+    if [ "$remote_content" != "$local_content" ]; then
+        echo "$remote_content" > "$SCRIPT_PATH"
+        exec "$SCRIPT_PATH" "$@"
+    fi
+fi
 
 URL_BASE="https://tradu.pages.dev"
 DOWNLOAD_DIR="$HOME/Downloads"
